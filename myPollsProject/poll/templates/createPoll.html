@@ -1,0 +1,118 @@
+<html>
+	<head><meta charset="utf-8">
+		<title>poll</title>
+		{% include 'navbar.html' %}
+		<style>
+			
+		</style>
+	</head>
+	<body>
+		<div class="container font-arial">
+			<div class="row align-left">
+				<div class="col-md-1 col-sm-4">
+					<a class="btn btn-primary" href="{% url 'index' %}">Back</a>
+				</div>
+				<div class="col-md-11 col-sm-4">
+					<h2> Create your Poll</h2>
+				</div>				
+			</div>
+			<hr>
+			{% if not request.user.is_authenticated %}				
+				<div class="alert alert-danger">
+					<h2><i class="bi bi-exclamation-triangle"></i> Login Required</h2>
+					<hr>
+					Dear User, You need to <a href="{% url 'user_login' %}">login</a> to create a poll.
+					If you don't have an account, You can <a href="{% url 'user_register' %}">register here</a>
+				</div>
+				
+			{% else %}
+				
+				<form method="POST" class="form createPollForm" action="{% url 'savePoll' %}">
+					{% csrf_token %}
+					<textarea class="form-control" placeholder="Add your question or topic" name="question" onfocus="checklength()" onkeyup="checklength()"></textarea>
+					<div class="q-limit"></div>
+					<br>
+					<button type="button" class="btn btn-primary" onclick="addOption()"> Add option </button>			
+					<div class="optionarea" id="optionarea"></div>
+					<br>
+					<button type="submit" class="btn btn-dark">
+						Create Poll
+					</button>
+				</form>
+			{% endif %}
+		</div>		
+		<script>
+			var sbmt=document.querySelector('.createPollForm button[type="submit"]');
+			var option_cnt=0;
+			sbmt.innerHTML = "<i class='bi bi-lock'></i>"+sbmt.innerHTML;
+			sbmt.disabled = true;
+			function checklength(){
+				var question = document.querySelector('.createPollForm textarea');
+				var q_limit = document.querySelector('.q-limit');
+				var len = question.value.length;
+				var ques_limit=100;
+				if(len < ques_limit){
+					q_limit.innerHTML = (ques_limit - len)+" characters left";
+				}else{
+					q_limit.innerHTML = "Question length is more than "+(ques_limit)+" characters";
+				}
+			}						
+			function addOption(){
+				var opt_list=document.querySelectorAll('.option');
+				var prev_count=opt_list.length;
+				var option = document.createElement('textarea');
+				var del_btn = document.createElement('button');
+				option.type = 'text';
+				option.classList.add('option');
+				option.name = 'option_text_'+(prev_count+1);
+				option.id = 'option_'+(prev_count+1);
+				option.placeholder = 'Add your option';
+				del_btn.type = 'button';
+				del_btn.classList.add('btn');
+				del_btn.classList.add('btn-danger');
+				del_btn.classList.add('btn-sm');
+				del_btn.innerHTML = 'Remove';
+				del_btn.onclick = removeOption(option.id);				
+				option.appendChild(del_btn);
+				var parent = document.querySelector('.optionarea');
+				parent.appendChild(option);
+				parent.appendChild(del_btn);
+				parent.appendChild(document.createElement('br'));
+				//console.log("option length :",document.querySelectorAll('.option').length);
+				if (document.querySelectorAll('.option').length-1 <= 0){
+					sbmt.disabled = true;
+					sbmt.innerHTML = "<i class='bi bi-lock'></i> Create Poll";
+				}else{
+					sbmt.disabled = false;
+					sbmt.innerHTML = "Create Poll";
+				}
+			}
+
+			function removeOption(id){
+				return function(){
+					var parent = document.querySelector('.optionarea');
+					parent.removeChild(document.getElementById(id));
+					console.log("removed option id:",id);
+					console.log("option length :",document.querySelectorAll('.option').length);
+					parent.removeChild(this);
+					if (document.querySelectorAll('.option').length-1 <= 0){
+						sbmt.disabled = true;
+						sbmt.innerHTML = "<i class='bi bi-lock'></i> Create Poll";
+					}else{
+						sbmt.disabled = false;
+						sbmt.innerHTML = "Create Poll";
+					}
+					removeBrTags();
+				}
+			}
+
+			function removeBrTags(){
+				var parent=document.querySelector('.optionarea');
+				var brs = parent.querySelectorAll('br');
+				for(var i=0;i<brs.length;i++){
+					parent.removeChild(brs[i]);
+				}
+			}
+		</script>
+	</body>
+</html>

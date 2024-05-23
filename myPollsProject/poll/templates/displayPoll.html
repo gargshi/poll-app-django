@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head><meta charset="utf-8">
+		<title>poll</title>
+		{% include 'navbar.html' %}				
+	</head>
+	<body>
+		<div class="container font-arial">			
+			<h2>Viewing poll</h2>
+			<hr>
+			
+			<div class="row">
+				<div class="col-md-8 poll-section">
+					<h4>POLL: {{poll.question}}</h4>
+					{% if options %}
+						<form class="form" action="{% url 'votePoll' %}" method="POST">
+							{% csrf_token %}
+							{% for option in options %}
+								<div class="f-input">
+									<input class="form-check-input" title="{{option.option_text}}" type="radio" name="vote" value="{{option.id}}" id="{{option.id}}">
+									<label class="form-check-label f-lbl" for="{{option.id}}">
+										{{option.option_text}}
+									</label>
+								</div>
+								<br>
+							{% endfor %}
+							<button class="btn btn-primary" type="submit"><i class="bi bi-star"></i> Vote</button>
+						</form>
+					{% else %}
+						<p>No options Found for the poll</p>
+					{% endif %}
+				</div>
+				<div class="col-md-4">
+					<h3> Votes cast till now : {{ poll_op.c }} </h3>
+				</div>
+			</div>
+			<hr>
+			<a class="btn btn-primary" href="{% url 'listPolls' %}">Back to poll list</a>		
+			<a class="btn btn-primary" href="{% url 'createPoll' %}">Create Poll</a>
+
+		</div>
+	</body>
+</html>

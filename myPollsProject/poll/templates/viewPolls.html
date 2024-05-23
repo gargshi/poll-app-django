@@ -1,0 +1,76 @@
+{% load humanize %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" viewport="width=device-width, initial-scale=1">
+		<title>poll</title>
+		{% include 'navbar.html' %}
+	</head>
+	
+	<style>
+		table{
+			border: 1px solid black;		
+		}
+		
+	</style>
+	<body>
+		<div class="container font-arial">
+			<!-- messages -->
+			{% include 'messages.html' %}
+			<h1>Polls</h1>
+			<hr>
+			<div class="row">
+				<div class="col-6">
+					<!-- search bar -->
+					<form class="d-flex" role="search" action="{% url 'listPolls' %}" method="POST">
+						{% csrf_token %}
+						<input class="form-control me-2" type="search" placeholder="Search for polls" aria-label="Search" name="search" value="{{query|default_if_none:''}}">
+						<button class="btn btn-outline-success" type="submit"><span><i class="bi bi-search"></i></span></button>
+					</form>
+				</div>				
+			</div>
+			<hr>	
+			<table class="table">
+				<tr class="table-dark">
+					<th>Question</th>
+					<th>Posted on</th>
+					<th>Votes Cast till now</th>
+					<th></th>
+				</tr>
+				
+				{% if polls %}
+					{% for poll in polls %}
+						<tr>
+							<td>
+								{{poll.poll__question}}
+							</td>
+							<td class="time">
+								{{ poll.poll__pub_date| date:"Y-m-d H:i" }}
+							</td>
+							<td>
+								{{poll.c}}
+							</td>
+							<td>
+								<a class="btn btn-primary btn-sm" href="{% url 'displayPoll' poll.poll__id %}">
+									<!-- eye icon -->
+									<i class="bi bi-eye"></i>
+									View Poll
+								</a>
+							</td>
+						</tr>
+					{% endfor %}
+				{% else %}
+					<p>No polls found in database.</p>
+				{% endif %}
+			</table>
+		</div>
+		<script src="https://momentjs.com/downloads/moment.min.js"></script>
+		<script>
+			time_cell=document.querySelectorAll('.time');
+			for (i=0;i<time_cell.length;i++){
+				let date = moment(time_cell[i].innerHTML, "YYYY-MM-DD HH:mm");
+				time_cell[i].innerHTML=date.fromNow();				
+			}			
+		</script>
+	</body>
+</html>

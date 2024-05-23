@@ -1,0 +1,34 @@
+.font-arial{
+	font-family: 'Arial','SegoeUI',"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+.f-input{
+	display: flex;
+	flex-direction: row;	
+	padding: 10px;
+	width:100%;	
+}
+.f-lbl{
+	padding-left: 10px;
+}
+.f-input :hover{	
+	background-color: black;
+	color: aliceblue;
+	padding-right: 1vw;
+}
+.poll-section{
+	padding-left: 30px;
+	border-right: 1px solid grey;
+}
+
+.align-left{
+	padding-top: 1vh;
+	text-align: left;
+}
+.optionarea{
+	display: flex;
+	flex-direction: column;
+	width:25%;
+}
+.green{
+	background-color: green;
+}
