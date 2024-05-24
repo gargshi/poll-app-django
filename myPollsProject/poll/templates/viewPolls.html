@@ -20,12 +20,21 @@
 			<h1>Polls</h1>
 			<hr>
 			<div class="row">
-				<div class="col-6">
+				<div class="col-md-6 col-sm-12">
 					<!-- search bar -->
-					<form class="d-flex" role="search" action="{% url 'listPolls' %}" method="POST">
+					<form class=" col-md-12 col-sm-12" role="search" action="{% url 'listPolls' %}" method="POST">
 						{% csrf_token %}
+						<div class="d-flex">
 						<input class="form-control me-2" type="search" placeholder="Search for polls" aria-label="Search" name="search" value="{{query|default_if_none:''}}">
+						{% if request.user.is_authenticated %}
+							<div class="form-control form-switch">
+								<input class="form-check-input" type="checkbox" role="switch" id="made_by_me_check" name="made_by_me" {% if made_by_me %} checked {% endif %}>
+								<label class="form-check-label" for="flexSwitchCheckDefault">Show polls made by me</label>
+							</div>
+						{% endif %}
 						<button class="btn btn-outline-success" type="submit"><span><i class="bi bi-search"></i></span></button>
+						</div>
+						<!-- switch for polls made by user -->
 					</form>
 				</div>				
 			</div>
@@ -34,6 +43,7 @@
 				<tr class="table-dark">
 					<th>Question</th>
 					<th>Posted on</th>
+					<th>Posted by</th>
 					<th>Votes Cast till now</th>
 					<th></th>
 				</tr>
@@ -46,6 +56,13 @@
 							</td>
 							<td class="time">
 								{{ poll.poll__pub_date| date:"Y-m-d H:i" }}
+							</td>
+							<td>								
+								{% if poll.poll__is_anonymous %}
+									Anonymous {% if request.user.is_authenticated %} {% if poll.poll__created_by__username == request.user.username %}({{ poll.poll__created_by__username }}) {% endif %} {% endif %}
+								{% else %}
+									{{ poll.poll__created_by__username }}
+								{% endif %}
 							</td>
 							<td>
 								{{poll.c}}

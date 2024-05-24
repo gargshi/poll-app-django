@@ -24,7 +24,16 @@
 								</div>
 								<br>
 							{% endfor %}
-							<button class="btn btn-primary" type="submit"><i class="bi bi-star"></i> Vote</button>
+							{% if request.user.is_authenticated %}
+								<button class="btn btn-primary" type="submit"><i class="bi bi-star"></i> Vote</button>
+							{% else %}
+								<div class="alert alert-danger">
+									<h2><i class="bi bi-exclamation-triangle"></i> Login Required to vote</h2>
+									<hr>
+									Dear User, You need to <a href="{% url 'user_login' %}">login</a> to vote to a poll.
+									If you don't have an account, You can <a href="{% url 'user_register' %}">register here</a>
+								</div>
+							{% endif %}
 						</form>
 					{% else %}
 						<p>No options Found for the poll</p>
@@ -39,5 +48,8 @@
 			<a class="btn btn-primary" href="{% url 'createPoll' %}">Create Poll</a>
 
 		</div>
+		<script>
+			
+		</script>
 	</body>
 </html>

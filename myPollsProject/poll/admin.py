@@ -4,7 +4,7 @@ from .models import Poll, Option
 
 @admin.register(Poll)
 class PollAdmin(admin.ModelAdmin):
-	list_display = ('question', 'pub_date')
+	list_display = ('question', 'pub_date','created_by','is_anonymous')
 
 @admin.register(Option)
 class OptionAdmin(admin.ModelAdmin):

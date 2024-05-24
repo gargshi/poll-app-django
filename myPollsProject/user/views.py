@@ -27,7 +27,7 @@ def doLogin(request):
 	if request.method == 'POST':
 		username = request.POST['username']
 		password = request.POST['password']
-		print(username,password)
+		# print(username,password)
 		try:
 			user=authenticate(username=username,password=password)
 		except Exception as e:
