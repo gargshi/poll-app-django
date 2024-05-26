@@ -9,9 +9,6 @@
 	<body>
 		<div class="container font-arial">
 			<div class="row align-left">
-				<div class="col-md-1 col-sm-4">
-					<a class="btn btn-primary" href="{% url 'index' %}">Back</a>
-				</div>
 				<div class="col-md-11 col-sm-4">
 					<h2> Create your Poll</h2>
 				</div>				
@@ -26,17 +23,23 @@
 				</div>
 				
 			{% else %}				
-				<form method="POST" class="form createPollForm" action="{% url 'savePoll' %}">
+				<form method="POST" class="form createPollForm col-md-6" action="{% url 'savePoll' %}">
 					{% csrf_token %}
 					<textarea class="form-control" placeholder="Add your question or topic" name="question" onfocus="checklength()" onkeyup="checklength()"></textarea>
 					<div class="q-limit"></div>
-					<br>
-					<button type="button" class="btn btn-primary" onclick="addOption()"> Add option </button>			
+					<hr>
 					<div class="optionarea" id="optionarea"></div>
-					<br>					
+					<hr>
+					<button type="button" class="btn btn-primary" onclick="addOption()"> Add option </button>			
+					<br>
+					<div class="form-check">						
+						<label for="poll_end_time">Please enter Poll end date and time</label>
+  						<input class="form-control" type="datetime-local" id="poll_end_time" name="poll_end_time">
+					</div>	
+					<br>				
 					<div class="form-check form-switch">
-						<input class="form-check-input" type="checkbox" role="switch" name="anonymous-poll" id="flexSwitchCheckDefault">
 						<label class="form-check-label" for="flexSwitchCheckDefault">Create Poll as anonymous</label>
+						<input class="form-check-input" type="checkbox" role="switch" name="anonymous-poll" id="flexSwitchCheckDefault">
 					</div>
 					<hr>
 					<button type="submit" class="btn btn-dark">
@@ -45,7 +48,7 @@
 				</form>
 			{% endif %}
 		</div>		
-		<script>
+		<script>			
 			var sbmt=document.querySelector('.createPollForm button[type="submit"]');
 			var option_cnt=0;
 			sbmt.innerHTML = "<i class='bi bi-lock'></i>"+sbmt.innerHTML;
@@ -64,27 +67,34 @@
 			function addOption(){
 				var opt_list=document.querySelectorAll('.option');
 				var prev_count=opt_list.length;
+				var option_bar=document.createElement('div');
+				option_bar.classList.add('option_bar');
 				var option = document.createElement('textarea');
 				var del_btn = document.createElement('button');
 				option.type = 'text';
 				option.classList.add('option');
+				option.classList.add('form-control');
+				option.classList.add('col-md-6');
 				option.name = 'option_text_'+(prev_count+1);
 				option.id = 'option_'+(prev_count+1);
+				option_bar.id = 'option_bar_'+(prev_count+1);
 				option.placeholder = 'Add your option';
+				option_bar.appendChild(option);
 				del_btn.type = 'button';
 				del_btn.classList.add('btn');
 				del_btn.classList.add('btn-danger');
 				del_btn.classList.add('btn-sm');
 				del_btn.innerHTML = 'Remove';
-				del_btn.onclick = removeOption(option.id);				
-				option.appendChild(del_btn);
+				del_btn.onclick = removeOption(option_bar.id);				
+				option_bar.appendChild(del_btn);
+				//option.appendChild(del_btn);
 				var parent = document.querySelector('.optionarea');
-				parent.appendChild(option);
-				parent.appendChild(del_btn);
-				parent.appendChild(document.createElement('br'));
+				parent.appendChild(option_bar);
+				//parent.appendChild(del_btn);	
+				//parent.appendChild(document.createElement('br'));
 				//console.log("option length :",document.querySelectorAll('.option').length);
-				if (document.querySelectorAll('.option').length-1 <= 0){
-					sbmt.disabled = true;
+				if (document.querySelectorAll('.option_bar').length-1 <= 0){
+					sbmt.disabled = true;					
 					sbmt.innerHTML = "<i class='bi bi-lock'></i> Create Poll";
 				}else{
 					sbmt.disabled = false;
@@ -97,16 +107,16 @@
 					var parent = document.querySelector('.optionarea');
 					parent.removeChild(document.getElementById(id));
 					console.log("removed option id:",id);
-					console.log("option length :",document.querySelectorAll('.option').length);
-					parent.removeChild(this);
-					if (document.querySelectorAll('.option').length-1 <= 0){
-						sbmt.disabled = true;
+					console.log("option length :",document.querySelectorAll('.option_bar').length);
+					//parent.removeChild(this);
+					if (document.querySelectorAll('.option_bar').length-1 <= 0){
+						sbmt.disabled = true;						
 						sbmt.innerHTML = "<i class='bi bi-lock'></i> Create Poll";
 					}else{
-						sbmt.disabled = false;
+						sbmt.disabled = false;						
 						sbmt.innerHTML = "Create Poll";
 					}
-					removeBrTags();
+					//removeBrTags();
 				}
 			}
 

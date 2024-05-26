@@ -33,8 +33,7 @@
 							</div>
 						{% endif %}
 						<button class="btn btn-outline-success" type="submit"><span><i class="bi bi-search"></i></span></button>
-						</div>
-						<!-- switch for polls made by user -->
+						</div>						
 					</form>
 				</div>				
 			</div>
@@ -43,6 +42,7 @@
 				<tr class="table-dark">
 					<th>Question</th>
 					<th>Posted on</th>
+					<th>Ends on</th>
 					<th>Posted by</th>
 					<th>Votes Cast till now</th>
 					<th></th>
@@ -56,6 +56,9 @@
 							</td>
 							<td class="time">
 								{{ poll.poll__pub_date| date:"Y-m-d H:i" }}
+							</td>
+							<td class="time">
+								{{ poll.poll__poll_end|date:"Y-m-d H:i" }}
 							</td>
 							<td>								
 								{% if poll.poll__is_anonymous %}
@@ -76,10 +79,19 @@
 							</td>
 						</tr>
 					{% endfor %}
+					<div>
+						
+					</div>
 				{% else %}
 					<p>No polls found in database.</p>
 				{% endif %}
+				
 			</table>
+			{% if request.user.is_authenticated %}
+				<div>
+					Liking our polls and want opinions? dont miss out! <a href="{% url 'createPoll' %}">Create your own poll</a>
+				</div>			
+			{% endif %}
 		</div>
 		<script src="https://momentjs.com/downloads/moment.min.js"></script>
 		<script>

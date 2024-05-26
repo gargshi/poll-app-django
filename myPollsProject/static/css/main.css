@@ -27,7 +27,12 @@
 .optionarea{
 	display: flex;
 	flex-direction: column;
-	width:25%;
+	width:100%;
+}
+.option_bar{
+	display: flex;
+	flex-direction: row;
+	width: 100%;
 }
 .green{
 	background-color: green;

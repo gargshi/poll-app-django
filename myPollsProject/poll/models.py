@@ -1,5 +1,5 @@
 from django.db import models
-from datetime import datetime
+from datetime import datetime,timedelta
 # from django.contrib.auth import User
 
 # Create your models here.
@@ -8,7 +8,7 @@ class Poll(models.Model):
 	created_by = models.ForeignKey('auth.User', on_delete=models.DO_NOTHING, default=None)
 	is_anonymous = models.BooleanField(default=False)
 	pub_date = models.DateTimeField('date published', default=datetime.now)
-
+	poll_end=models.DateTimeField('poll end', default=datetime.now()+timedelta(hours=1))
 	def __str__(self):
 		return self.question
 	
