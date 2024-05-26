@@ -35,7 +35,7 @@ def doLogin(request):
 		print("user=",user)
 		if user is not None:
 			login(request,user)
-			messages.info(request, 'hi '+username+', You are now logged in!')
+			messages.info(request, 'Hi '+username+', You are now logged in!')
 			return redirect('listPolls')		
 		else:
 			print("invalid credentials or user is none")

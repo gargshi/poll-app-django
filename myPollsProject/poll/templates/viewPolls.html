@@ -62,9 +62,14 @@
 							</td>
 							<td>								
 								{% if poll.poll__is_anonymous %}
-									Anonymous {% if request.user.is_authenticated %} {% if poll.poll__created_by__username == request.user.username %}({{ poll.poll__created_by__username }}) {% endif %} {% endif %}
+									Anonymous {% if request.user.is_authenticated %} {% if poll.poll__created_by__username == request.user.username %}({{ poll.poll__created_by__username }})[You] {% endif %} {% endif %}
 								{% else %}
 									{{ poll.poll__created_by__username }}
+									{% if request.user.is_authenticated %}
+										{% if poll.poll__created_by__username == request.user.username %}
+											[You]
+										{% endif %}
+									{% endif %}
 								{% endif %}
 							</td>
 							<td>
@@ -76,6 +81,16 @@
 									<i class="bi bi-eye"></i>
 									View Poll
 								</a>
+								<!-- delete poll -->
+								{% if request.user.is_authenticated %}
+									{% if poll.poll__created_by__username == request.user.username %}
+										<a class="btn btn-danger btn-sm" href="#">
+											<!-- trash icon -->
+											<i class="bi bi-trash"></i>
+											Delete
+										</a>
+									{% endif %}
+								{% endif %}
 							</td>
 						</tr>
 					{% endfor %}
