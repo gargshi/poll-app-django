@@ -41,6 +41,15 @@
 				</div>
 				<div class="col-md-4">
 					<h3> Votes cast till now : {{ poll_op.c }} </h3>
+					{% if request.user.is_authenticated %}						
+						{% if poll.created_by == request.user %}
+							<a class="btn btn-danger btn-sm" href="{% url 'deletePoll' poll.id %}">
+								<!-- trash icon -->
+								<i class="bi bi-trash"></i>
+								Delete Poll
+							</a>
+						{% endif %}
+					{% endif %}
 				</div>
 			</div>
 			<hr>

@@ -37,7 +37,48 @@
 					</form>
 				</div>				
 			</div>
-			<hr>	
+			<hr>
+			<div class="card-wrapper">
+				{% if polls %}
+					{% for poll in polls %}
+						<div class="card col-md-4 col-sm-12 card-style" onmouseover="highlight(this)" onmouseout="unhighlight(this)">
+							<div class="card-body">
+								<h5 class="card-title">{{poll.poll__question}}</h5>
+								<p class="card-text">
+									Posted by {{poll.poll__created_by__username}} on
+									<span class="time">
+										{{ poll.poll__pub_date| date:"Y-m-d H:i" }}
+									</span>, till
+									<span class="time">
+										{{ poll.poll__poll_end|date:"Y-m-d H:i" }}
+									</span>
+								</p>
+								<p class="card-text">Total votes: {{poll.c}}</p>
+								<hr>
+								<div class="btn-group btn-grp-style">
+									<a class="btn btn-primary btn-sm" href="{% url 'displayPoll' poll.poll__id %}">
+										<!-- eye icon -->
+										<i class="bi bi-eye"></i>
+										View Poll
+									</a>
+									{% if request.user.is_authenticated %}
+										{% if poll.poll__created_by__username == request.user.username %}
+											<a class="btn btn-danger btn-sm" href="{% url 'deletePoll' poll.poll__id %}">
+												<!-- trash icon -->
+												<i class="bi bi-trash"></i>
+												Delete
+											</a>
+										{% endif %}
+									{% endif %}									
+								</div>
+							</div>
+						</div>
+					{% endfor %}
+				{% else %}
+					<p>No polls Found</p>
+				{% endif %}
+			</div>
+			<hr>
 			<table class="table">
 				<tr class="table-dark">
 					<th>Question</th>
@@ -84,7 +125,7 @@
 								<!-- delete poll -->
 								{% if request.user.is_authenticated %}
 									{% if poll.poll__created_by__username == request.user.username %}
-										<a class="btn btn-danger btn-sm" href="#">
+										<a class="btn btn-danger btn-sm" href="{% url 'deletePoll' poll.poll__id %}">
 											<!-- trash icon -->
 											<i class="bi bi-trash"></i>
 											Delete
@@ -106,7 +147,7 @@
 				<div>
 					Liking our polls and want opinions? dont miss out! <a href="{% url 'createPoll' %}">Create your own poll</a>
 				</div>			
-			{% endif %}
+			{% endif %}			
 		</div>
 		<script src="https://momentjs.com/downloads/moment.min.js"></script>
 		<script>
@@ -114,7 +155,17 @@
 			for (i=0;i<time_cell.length;i++){
 				let date = moment(time_cell[i].innerHTML, "YYYY-MM-DD HH:mm");
 				time_cell[i].innerHTML=date.fromNow();				
-			}			
-		</script>
+			}
+
+			function highlight(e){
+				e.style.transition="0.1s all linear";
+				e.style.transform="scale(0.98)";
+			}
+
+			function unhighlight(e){
+				e.style.transform="scale(1)";
+			}
+
+		</script>		
 	</body>
 </html>

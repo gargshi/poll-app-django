@@ -37,3 +37,23 @@
 .green{
 	background-color: green;
 }
+
+.card-wrapper{
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	overflow: hidden;
+}
+
+.card-style{
+	background-color: secondary;	
+}
+
+
+.btn-grp-style{
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	overflow: hidden;
+}

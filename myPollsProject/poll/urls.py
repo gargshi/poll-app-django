@@ -8,5 +8,6 @@ urlpatterns = [
 	path('viewPolls/',views.listPolls,name="listPolls"),
 	path('displayPoll/<int:poll_id>/',views.displayPoll,name="displayPoll"),
 	path('votePoll/',views.castVote,name="votePoll"),
+	path('deletePoll/<int:poll_id>/',views.deletePoll,name="deletePoll"),
 	# path('searchPolls/',views.searchPolls,name="searchPolls"),
 ]

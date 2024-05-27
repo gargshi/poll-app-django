@@ -17,7 +17,7 @@ def savePoll(request):
 		# dum='2024-05-20T20:52'
 		end_time=request.POST.get('poll_end_time')
 		# end_time=dum
-		end_time=datetime.datetime.strptime(end_time, '%Y-%m-%dT%H:%M')
+		end_time=datetime.datetime.strptime(end_time, '%Y-%m-%dT%H:%M') if end_time else datetime.datetime.now()+datetime.timedelta(hours=1)
 		# print(end_time)
 		question = request.POST['question']
 		make_anonymous = request.POST.get('anonymous-poll')
@@ -59,7 +59,7 @@ def listPolls(request):
 def displayPoll(request,poll_id):
 	poll = Poll.objects.get(id=poll_id)
 	options = Option.objects.filter(poll=poll)
-	poll_op = options.values('poll').annotate(c=Sum('votes')).values('poll__id','poll__question','c')[0]
+	poll_op = options.values('poll').annotate(c=Sum('votes')).values('poll__id','poll__question','c','poll__created_by__username')[0]
 	# print(poll_op)
 	return render(request,'displayPoll.html',{'poll_op':poll_op,'poll':poll,'options':options})
 
@@ -72,4 +72,19 @@ def castVote(request):
 		messages.success(request, f'Yay! Your Vote was Cast Successfully, thank you {request.user.username}.')
 	else:
 		messages.warning(request, 'Vote cannot be cast due to some error or you are not logged in. Please contact the administrator.')
+	return redirect('listPolls')
+
+def deletePoll(request,poll_id):
+	if request.user.is_authenticated:
+		poll = Poll.objects.get(id=poll_id)
+		options = Option.objects.filter(poll=poll)
+		if request.user == poll.created_by:
+			for i in options:
+				i.delete()
+			poll.delete()
+			messages.success(request, 'Poll deleted successfully')
+		else:
+			messages.warning(request, 'You are not authorized to delete this poll')
+	else:
+		messages.info(request, 'Poll deletion failed as you are not logged in')		
 	return redirect('listPolls')
