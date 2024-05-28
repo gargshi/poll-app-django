@@ -42,6 +42,14 @@
 				{% if polls %}
 					{% for poll in polls %}
 						<div class="card col-md-4 col-sm-12 card-style" onmouseover="highlight(this)" onmouseout="unhighlight(this)">
+							<div class="card-header">
+								<strong>Poll</strong>
+								{% if poll.voted %}
+									<span class="badge text-bg-success">Voted</span>								
+								{% else %}								
+									
+								{% endif %}							
+							</div>
 							<div class="card-body">
 								<h5 class="card-title">{{poll.poll__question}}</h5>
 								<p class="card-text">
@@ -52,7 +60,7 @@
 									<span class="time">
 										{{ poll.poll__poll_end|date:"Y-m-d H:i" }}
 									</span>
-								</p>
+								</p>								
 								<p class="card-text">Total votes: {{poll.c}}</p>
 								<hr>
 								<div class="btn-group btn-grp-style">

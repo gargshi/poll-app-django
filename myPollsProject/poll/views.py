@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render
 from django.db.models import Sum,F
-from .models import Poll, Option
+from .models import Poll, Option, Vote
 from django.contrib import messages
 import datetime
 
@@ -43,7 +43,7 @@ def listPolls(request):
 	# if search is used
 	if request.method == 'POST':
 		query=request.POST['search']
-		made_by_me = False		
+		made_by_me = False				
 		polls = Option.objects.values('poll').annotate(c=Sum('votes')).values('poll__id','poll__question','poll__pub_date','c','poll__is_anonymous','poll__created_by__username','poll__poll_end').filter(poll__question__contains=query).all()
 		if request.user.is_authenticated:
 			made_by_me = request.POST.get('made_by_me')
@@ -51,25 +51,51 @@ def listPolls(request):
 				polls = Option.objects.values('poll').annotate(c=Sum('votes')).values('poll__id','poll__question','poll__pub_date','c','poll__is_anonymous','poll__created_by__username','poll__poll_end').filter(poll__question__contains=query,poll__created_by=request.user).all()	
 		else:
 			polls = Option.objects.values('poll').annotate(c=Sum('votes')).values('poll__id','poll__question','poll__pub_date','c','poll__is_anonymous','poll__created_by__username','poll__poll_end').filter(poll__question__contains=query).all()		
+		# check if polls are already voted
+		for poll in polls:
+			vote = Vote.objects.filter(user=request.user, poll=poll['poll__id'])
+			if vote:
+				poll['voted'] = True
+			else:
+				poll['voted'] = False
+			print(poll)
 		return render(request,'viewPolls.html',{'polls':polls,'query':query,'made_by_me':made_by_me})
 	# if search is not used
 	polls = Option.objects.values('poll').annotate(c=Sum('votes')).values('poll__id','poll__question','poll__pub_date','poll__is_anonymous','poll__created_by__username','poll__poll_end','c')
+	for poll in polls:
+		vote = Vote.objects.filter(user=request.user, poll=poll['poll__id'])
+		if vote:
+			poll['voted'] = True
+		else:
+			poll['voted'] = False
+		# print(poll)
 	return render(request,'viewPolls.html',{'polls':polls})
 
 def displayPoll(request,poll_id):
 	poll = Poll.objects.get(id=poll_id)
 	options = Option.objects.filter(poll=poll)
+	vote = Vote.objects.filter(user=request.user, poll=poll)
+	vote = vote if vote else None
+	already_voted = False
+	if vote:
+		messages.warning(request, 'You have already voted for this poll on '+vote[0].voted_on.strftime("%Y-%m-%d %H:%M"))
+		already_voted = True
 	poll_op = options.values('poll').annotate(c=Sum('votes')).values('poll__id','poll__question','c','poll__created_by__username')[0]
 	# print(poll_op)
-	return render(request,'displayPoll.html',{'poll_op':poll_op,'poll':poll,'options':options})
+	return render(request,'displayPoll.html',{'poll_op':poll_op,'poll':poll,'options':options,'already_voted':already_voted,'vote':vote[0] if vote else None})
 
 def castVote(request):
 	if request.method == 'POST' and request.user.is_authenticated:
 		# print(request.POST)		
 		option_id = request.POST['vote']
 		poll=Option.objects.get(id=option_id).poll
-		Option.objects.filter(id=option_id).update(votes=F('votes')+1)
-		messages.success(request, f'Yay! Your Vote was Cast Successfully, thank you {request.user.username}.')
+		vote = Vote.objects.filter(user=request.user, poll=poll)
+		if vote:
+			messages.warning(request, 'You have already voted for this poll')			
+		else:
+			Vote.objects.create(user=request.user, poll=poll, option=Option.objects.get(id=option_id))
+			Option.objects.filter(id=option_id).update(votes=F('votes')+1)
+			messages.success(request, f'Yay! Your Vote was Cast Successfully, thank you {request.user.username}.')
 	else:
 		messages.warning(request, 'Vote cannot be cast due to some error or you are not logged in. Please contact the administrator.')
 	return redirect('listPolls')

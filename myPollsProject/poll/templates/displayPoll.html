@@ -8,24 +8,28 @@
 		<div class="container font-arial">			
 			<h2>Viewing poll</h2>
 			<hr>
-			
+			{% include 'messages.html' %}			
 			<div class="row">
 				<div class="col-md-8 poll-section">
 					<h4>POLL: {{poll.question}}</h4>
 					{% if options %}
 						<form class="form" action="{% url 'votePoll' %}" method="POST">
 							{% csrf_token %}
-							{% for option in options %}
+							{% for option in options %}								
 								<div class="f-input">
-									<input class="form-check-input" title="{{option.option_text}}" type="radio" name="vote" value="{{option.id}}" id="{{option.id}}">
+									<input class="form-check-input" title="{{option.option_text}}" type="radio" name="vote" value="{{option.id}}" id="{{option.id}}" 
+										{% if vote.option.id == option.id %} checked {% endif %} 
+										{% if already_voted %} disabled {% endif %}>
 									<label class="form-check-label f-lbl" for="{{option.id}}">
 										{{option.option_text}}
 									</label>
-								</div>
+								</div>								
 								<br>
 							{% endfor %}
 							{% if request.user.is_authenticated %}
-								<button class="btn btn-primary" type="submit"><i class="bi bi-star"></i> Vote</button>
+								{% if not already_voted %}
+									<button class="btn btn-primary" type="submit"><i class="bi bi-star"></i> Vote</button>								
+								{% endif %}
 							{% else %}
 								<div class="alert alert-danger">
 									<h2><i class="bi bi-exclamation-triangle"></i> Login Required to vote</h2>

@@ -32,7 +32,7 @@ def doLogin(request):
 			user=authenticate(username=username,password=password)
 		except Exception as e:
 			print(e)
-		print("user=",user)
+		# print("user=",user)
 		if user is not None:
 			login(request,user)
 			messages.info(request, 'Hi '+username+', You are now logged in!')

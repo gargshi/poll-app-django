@@ -27,3 +27,15 @@ class Option(models.Model):
 	class Meta:
 		verbose_name_plural = "Options"
 		db_table = "options"
+
+class Vote(models.Model):
+	user = models.ForeignKey('auth.User', on_delete=models.DO_NOTHING)
+	poll = models.ForeignKey(Poll, on_delete=models.DO_NOTHING)
+	option = models.ForeignKey(Option, on_delete=models.DO_NOTHING)
+	voted_on = models.DateTimeField('date voted', default=datetime.now)
+
+	def __str__(self):
+		return self.user.username + ' voted for ' + self.option.option_text + ' on ' + self.poll.question
+	
+	class Meta:
+		db_table = "votes"
