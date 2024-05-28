@@ -35,6 +35,14 @@
 						<button class="btn btn-outline-success" type="submit"><span><i class="bi bi-search"></i></span></button>
 						</div>						
 					</form>
+					<br>
+					<div class="col-md-12 col-sm-12">
+						<div class="form-switch">
+							<input class="form-check-input" type="checkbox" role="switch" id="list_details_check" name="list_detail" onchange="changeListDetails(this)">
+							<label class="form-check-label" for="list_details_check">Display: </label>
+							<span class="C">Cards View</span>							
+						</div>
+					</div>
 				</div>				
 			</div>
 			<hr>
@@ -53,7 +61,18 @@
 							<div class="card-body">
 								<h5 class="card-title">{{poll.poll__question}}</h5>
 								<p class="card-text">
-									Posted by {{poll.poll__created_by__username}} on
+									Posted by 
+									{% if poll.poll__is_anonymous %}
+										Anonymous {% if request.user.is_authenticated %} {% if poll.poll__created_by__username == request.user.username %}({{ poll.poll__created_by__username }})[You] {% endif %} {% endif %}
+									{% else %}
+										{{ poll.poll__created_by__username }}
+										{% if request.user.is_authenticated %}
+											{% if poll.poll__created_by__username == request.user.username %}
+												[You]
+											{% endif %}
+										{% endif %}
+									{% endif %}
+									
 									<span class="time">
 										{{ poll.poll__pub_date| date:"Y-m-d H:i" }}
 									</span>, till
@@ -87,7 +106,7 @@
 				{% endif %}
 			</div>
 			<hr>
-			<table class="table">
+			<table class="table tbl">
 				<tr class="table-dark">
 					<th>Question</th>
 					<th>Posted on</th>
@@ -172,6 +191,22 @@
 
 			function unhighlight(e){
 				e.style.transform="scale(1)";
+			}
+
+			var tbl=document.querySelector('.tbl');
+			var card_wrapper=document.querySelector('.card-wrapper');
+
+			function changeListDetails(e){				
+				if (!e.checked){
+					tbl.style.display="none";
+					card_wrapper.style.display="flex";
+					document.querySelector('.C').innerHTML="Cards View";
+				}else{
+					tbl.style.display="block";
+					tbl.style.width="100%";
+					card_wrapper.style.display="none";
+					document.querySelector('.C').innerHTML="Table View";
+				}				
 			}
 
 		</script>		

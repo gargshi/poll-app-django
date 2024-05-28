@@ -49,7 +49,9 @@
 	background-color: secondary;	
 }
 
-
+.tbl{
+	display: none;
+}
 .btn-grp-style{
 	display: flex;
 	flex-direction: row;
