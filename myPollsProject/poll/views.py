@@ -44,13 +44,13 @@ def listPolls(request):
 	if request.method == 'POST':
 		query=request.POST['search']
 		made_by_me = False				
-		polls = Option.objects.values('poll').annotate(c=Sum('votes')).values('poll__id','poll__question','poll__pub_date','c','poll__is_anonymous','poll__created_by__username','poll__poll_end').filter(poll__question__contains=query).order_by('-poll__pub_date').all()
+		polls = Option.objects.values('poll').annotate(c=Sum('votes')).values('poll__id','poll__question','poll__pub_date','c','poll__is_anonymous','poll__created_by__username','poll__poll_end').filter(poll__question__icontains=query).order_by('-poll__pub_date').all()
 		if request.user.is_authenticated:
 			made_by_me = request.POST.get('made_by_me')
 			if made_by_me and made_by_me == 'on':
-				polls = Option.objects.values('poll').annotate(c=Sum('votes')).values('poll__id','poll__question','poll__pub_date','c','poll__is_anonymous','poll__created_by__username','poll__poll_end').filter(poll__question__contains=query,poll__created_by=request.user).order_by('-poll__pub_date').all()	
+				polls = Option.objects.values('poll').annotate(c=Sum('votes')).values('poll__id','poll__question','poll__pub_date','c','poll__is_anonymous','poll__created_by__username','poll__poll_end').filter(poll__question__icontains=query,poll__created_by=request.user).order_by('-poll__pub_date').all()	
 		else:
-			polls = Option.objects.values('poll').annotate(c=Sum('votes')).values('poll__id','poll__question','poll__pub_date','c','poll__is_anonymous','poll__created_by__username','poll__poll_end').filter(poll__question__contains=query).order_by('-poll__pub_date').all()		
+			polls = Option.objects.values('poll').annotate(c=Sum('votes')).values('poll__id','poll__question','poll__pub_date','c','poll__is_anonymous','poll__created_by__username','poll__poll_end').filter(poll__question__icontains=query).order_by('-poll__pub_date').all()		
 		# check if polls are already voted
 		for poll in polls:
 			if request.user.is_authenticated:

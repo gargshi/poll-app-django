@@ -9,20 +9,86 @@
 		<script src="{% static 'js/main.js' %}"></script>
 	</head>
 	<body>
-		<div class="container">
-			{% include 'messages.html' %}
-			<h1>Poll</h1>
-			<a class="btn btn-primary btn-lg" href="{% url 'createPoll' %}">Create</a>
-			<a class="btn btn-primary btn-lg" href="{% url 'listPolls' %}">View Polls</a>
-			<br>
+		{% include 'messages.html' %}		
+		<header class="hero d-flex justify-content-center align-items-center text-center bg-purple text-white">
+			<div class="container pad-bottom">
+				{% if request.user.is_authenticated %}
+					<h1 class="display-3 fw-bold">Welcome {{ request.user.username }}</h1>
+					{% else %}
+					<h1 class="display-3 fw-bold">Make Your Voice Heard</h1>
+					<p class="lead">Join the largest polling app in India and share your opinions!</p>
+				{% endif %}
+				<a href="{% url 'listPolls' %}" class="btn btn-lg btn-outline-light">View Trending Polls</a>
+				<!-- <a href="#" class="btn btn-lg btn-outline-light">Join the Conversation</a> -->
+				<!-- <a href="#" class="btn btn-lg btn-light">Sign Up Now</a>								 -->
+			</div>
+			
+		</header>
+		<section class="features py-5 font-arial">
+			<div class="container">
+				<h2 class="text-center mb-4 bg-purple text-white">Features</h2>
+				<div class="row">
+					<div class="col-md-4">
+						<div class="card mb-3">
+							<div class="card-body">
+								<i class="bi bi-megaphone display-4 text-primary mb-3"></i>
+								<h3 class="card-title">Diverse Range of Polls</h3>
+								<p class="card-text">We offer polls on a wide variety of topics, from current events to pop culture.</p>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="card mb-3">
+							<div class="card-body">
+								<i class="bi bi-bar-chart display-4 text-primary mb-3"></i>
+								<h3 class="card-title">Real-time Results</h3>
+								<p class="card-text">See how your vote compares to others instantly after casting your ballot.</p>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="card mb-3">
+							<div class="card-body">
+								<i class="bi bi-shield-lock display-4 text-primary mb-3"></i>
+								<h3 class="card-title">Secure and Anonymous</h3>
+								<p class="card-text">Your votes are always anonymous, and our platform is secure to protect your privacy.</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
 
-			{% if request.user.is_authenticated %}
-				<a> Welcome {{ request.user.username }}</a>
-				
-			{% else %}
-				<a href="{% url 'user_login' %}">Login</a>
-				<a href="{% url 'user_register' %}">Register</a>
-			{% endif %}
-		</div>
+		{% if not request.user.is_authenticated %}
+			<section class="how-it-works py-5 bg-light">
+				<div class="container">
+					<h2 class="text-center mb-4">How it Works</h2>
+					<div class="row">
+						<div class="col-md-6">
+							<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTE0aSJkVYgfHI79Wqetu5objO5cGaVdnmOg&s" alt="Person using phone to vote in a poll" class="img-fluid mb-3">
+						</div>
+						<div class="col-md-6">
+							<ol class="list-group">
+								<li class="list-group-item">Sign up for a free account.</li>
+								<li class="list-group-item">Browse through our ongoing polls.</li>
+								<li class="list-group-item">Cast your vote on the ones that interest you.</li>
+								<li class="list-group-item">See the results instantly and share your thoughts.</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+			</section>
+		{% endif %}
+
+		<section class="cta py-5 text-center bg-purple text-white">
+			<div class="container">
+				<h1 class="display-6 fw-bold">Have an interesting poll topic?</h1>
+				<p class="lead">Get started in no time! <strong>Join the Movement Today!</strong></p>
+				<a href="{% url 'createPoll' %}" class="btn btn-lg btn-outline-light">Create Poll</a>				
+				<!-- <a href="#" class="btn btn-lg btn-primary">Sign Up Now</a> -->
+			</div>
+		</section>
 	</body>
+<hr>
+
 </html>

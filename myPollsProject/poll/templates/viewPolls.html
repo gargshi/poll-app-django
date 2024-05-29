@@ -193,16 +193,17 @@
 				e.style.transform="scale(1)";
 			}
 
-			var tbl=document.querySelector('.tbl');
+			var tbl=document.querySelector('.table');
+			var tbl_display=tbl.style.display;
 			var card_wrapper=document.querySelector('.card-wrapper');
 
 			function changeListDetails(e){				
 				if (!e.checked){
-					tbl.style.display="none";
+					tbl.classList.add('tbl');
 					card_wrapper.style.display="flex";
 					document.querySelector('.C').innerHTML="Cards View";
 				}else{
-					tbl.style.display="block";
+					tbl.classList.remove('tbl');
 					tbl.style.width="100%";
 					card_wrapper.style.display="none";
 					document.querySelector('.C').innerHTML="Table View";

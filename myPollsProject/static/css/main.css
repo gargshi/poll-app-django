@@ -1,3 +1,6 @@
+*{
+	scroll-behavior: smooth;
+}
 .font-arial{
 	font-family: 'Arial','SegoeUI',"Helvetica Neue",Helvetica,Arial,sans-serif;
 }
@@ -58,4 +61,12 @@
 	flex-wrap: nowrap;
 	justify-content: space-between;
 	overflow: hidden;
+}
+.pad-bottom{
+	padding-bottom: 1vh;
+}
+
+.bg-purple{
+	background-color: purple;
+	border-bottom: 1px solid grey;
 }
