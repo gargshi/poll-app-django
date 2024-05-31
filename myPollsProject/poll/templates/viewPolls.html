@@ -78,7 +78,18 @@
 									</span>, till
 									<span class="time">
 										{{ poll.poll__poll_end|date:"Y-m-d H:i" }}
-									</span>
+									</span>									
+									<hr>
+									Time left: {{ poll.time_left.days }} days 
+									<span class="time_left">
+										{{ poll.time_left.seconds }}
+									</span>								
+									
+									{% if not poll.is_active %}
+									<span class="badge text-bg-danger">Poll Ended</span>
+									{% else %}
+										<span class="badge text-bg-success">Poll Active</span>
+									{% endif %}
 								</p>								
 								<p class="card-text">Total votes: {{poll.c}}</p>
 								<hr>
@@ -183,6 +194,14 @@
 				let date = moment(time_cell[i].innerHTML, "YYYY-MM-DD HH:mm");
 				time_cell[i].innerHTML=date.fromNow();				
 			}
+
+			time_left_cell=document.querySelectorAll('.time_left');
+			for (i=0;i<time_left_cell.length;i++){
+				let hms=Math.trunc((time_left_cell[i].innerHTML)/3600) + " hours " + Math.trunc((time_left_cell[i].innerHTML)%3600/60) + " minutes " + Math.trunc((time_left_cell[i].innerHTML)%3600%60)+" seconds";
+				time_left_cell[i].innerHTML=hms;							
+			}
+
+
 
 			function highlight(e){
 				e.style.transition="0.1s all linear";

@@ -3,6 +3,9 @@ from django.db.models import Sum,F
 from .models import Poll, Option, Vote
 from django.contrib import messages
 import datetime
+import pytz
+
+utc=pytz.timezone('UTC')
 
 # Create your views here.
 def index(request):
@@ -40,37 +43,31 @@ def savePoll(request):
 	return redirect('listPolls')
 
 def listPolls(request):
-	# if search is used
-	if request.method == 'POST':
-		query=request.POST['search']
-		made_by_me = False				
-		polls = Option.objects.values('poll').annotate(c=Sum('votes')).values('poll__id','poll__question','poll__pub_date','c','poll__is_anonymous','poll__created_by__username','poll__poll_end').filter(poll__question__icontains=query).order_by('-poll__pub_date').all()
-		if request.user.is_authenticated:
-			made_by_me = request.POST.get('made_by_me')
-			if made_by_me and made_by_me == 'on':
-				polls = Option.objects.values('poll').annotate(c=Sum('votes')).values('poll__id','poll__question','poll__pub_date','c','poll__is_anonymous','poll__created_by__username','poll__poll_end').filter(poll__question__icontains=query,poll__created_by=request.user).order_by('-poll__pub_date').all()	
-		else:
-			polls = Option.objects.values('poll').annotate(c=Sum('votes')).values('poll__id','poll__question','poll__pub_date','c','poll__is_anonymous','poll__created_by__username','poll__poll_end').filter(poll__question__icontains=query).order_by('-poll__pub_date').all()		
-		# check if polls are already voted
-		for poll in polls:
-			if request.user.is_authenticated:
-				vote = Vote.objects.filter(user=request.user, poll=poll['poll__id'])
-				if vote:
-					poll['voted'] = True
-				else:
-					poll['voted'] = False
-			# print(poll)
-		
-		return render(request,'viewPolls.html',{'polls':polls,'query':query,'made_by_me':made_by_me})
-	# if search is not used
-	polls = Option.objects.values('poll').annotate(c=Sum('votes')).values('poll__id','poll__question','poll__pub_date','poll__is_anonymous','poll__created_by__username','poll__poll_end','c').order_by('-poll__pub_date').all()
+	polls = Option.objects.values('poll').annotate(c=Sum('votes')).values('poll__id','poll__question','poll__pub_date','poll__is_anonymous','poll__created_by__username','poll__poll_end','c').filter(poll__poll_end__gt = datetime.datetime.now()).order_by('-poll__pub_date').all()
+	# check if polls are already voted
 	for poll in polls:
+		if poll['poll__poll_end'] > utc.localize(datetime.datetime.now()):
+			poll['time_left'] = poll['poll__poll_end'] - utc.localize(datetime.datetime.now())
+			poll['is_active'] = True
+		else:
+			poll['is_active'] = False
 		if request.user.is_authenticated:
 			vote = Vote.objects.filter(user=request.user, poll=poll['poll__id'])
 			if vote:
 				poll['voted'] = True
 			else:
-				poll['voted'] = False	
+				poll['voted'] = False
+	# if search is used
+	if request.method == 'POST':
+		query=request.POST['search']
+		made_by_me = False				
+		# polls = Option.objects.values('poll').annotate(c=Sum('votes')).values('poll__id','poll__question','poll__pub_date','c','poll__is_anonymous','poll__created_by__username','poll__poll_end').filter(poll__question__icontains=query).order_by('-poll__pub_date').all()
+		polls=polls.filter(poll__question__icontains=query).order_by('-poll__pub_date').all()
+		if request.user.is_authenticated:
+			made_by_me = request.POST.get('made_by_me')
+			if made_by_me and made_by_me == 'on':
+				polls = polls.filter(poll__created_by=request.user).order_by('-poll__pub_date').all()		
+		return render(request,'viewPolls.html',{'polls':polls,'query':query,'made_by_me':made_by_me})	
 	return render(request,'viewPolls.html',{'polls':polls})
 
 def displayPoll(request,poll_id):
