@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>poll - contact</title>
+		{% include 'navbar.html' %}
+		<script src="{% static 'js/main.js' %}"></script>
+	</head>
+	<body>
+		{% include 'messages.html' %}		
+		<header class="hero d-flex justify-content-center align-items-center text-center bg-purple text-white">
+			<div class="container pad-bottom">
+				{% if request.user.is_authenticated %}
+					<h1 class="display-3 fw-bold">Welcome {{ request.user.username }}</h1>
+					{% else %}
+					<h2>Contact Us</h2>					
+					<p class="lead">Dont hesitate to contact us for any queries or issues</p>
+				{% endif %}
+			</div>			
+		</header>		
+		<div class="container">
+			<div class="col-md-6 my-5 bg-secondary text-white p-3">
+				<form action="{% url 'contact' %}" method="post">
+					{% csrf_token %}
+					<div class="mb-3 col-12">						
+						<input placeholder="Your Name" type="text" class="form-control" id="name" name="name">
+					</div>
+					<div class="mb-3">						
+						<input placeholder="Your Email" type="email" class="form-control" id="email" name="email">
+					</div>
+					<div class="mb-3">						
+						<input placeholder="Subject" type="text" class="form-control" id="subject" name="subject">
+					</div>
+					<div class="mb-3">						
+						<textarea placeholder="Your Message" class="form-control" id="message" name="message"></textarea>
+					</div>
+					<div class="mb-3">
+						<label for="category" class="form-label">Category</label>
+						<select class="form-select" id="category" name="category">
+							<option value="general" selected>General</option>
+							<option value="suggestions">Suggestions</option>
+							<option value="complaint">Complaint</option>
+							<option value="bugs">Bugs</option>
+						</select>
+					</div>
+					<hr>
+					<button type="submit" class="btn btn-primary">Submit</button>
+				</form>
+			</div>
+		</div>
+	</body>
+	<hr>
+
+</html>

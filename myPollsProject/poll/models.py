@@ -39,3 +39,12 @@ class Vote(models.Model):
 	
 	class Meta:
 		db_table = "votes"
+
+class Contact(models.Model):
+	name = models.CharField(max_length=100, default="<Anonymous>")
+	category = models.CharField(max_length=100)
+	email = models.EmailField()
+	subject = models.CharField(max_length=100, default="<No Subject>")
+	message = models.TextField()
+	def __str__(self):
+		return self.subject

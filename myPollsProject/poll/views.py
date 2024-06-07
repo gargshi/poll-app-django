@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render
 from django.db.models import Sum,F
-from .models import Poll, Option, Vote
+from .models import Poll, Option, Vote, Contact
 from django.contrib import messages
 import datetime
 import pytz
@@ -10,6 +10,22 @@ utc=pytz.timezone('UTC')
 # Create your views here.
 def index(request):
 	return render(request,'index.html')
+
+def contact(request):
+	if request.method == 'POST' and '/contact/' in request.headers['Referer']:
+		name=request.POST['name']
+		email=request.POST['email']
+		message=request.POST['message']
+		subject=request.POST['subject']
+		category=request.POST['category']
+		if email == '' or not email:
+			messages.error(request, 'Please enter valid email address.')
+		if message == '' or not message:
+			messages.error(request, 'Please enter a message.')
+		else:
+			Contact.objects.create(name=name, email=email, subject=subject, message=message, category=category)
+			messages.success(request, 'Thank you for contacting us. We will get back to you soon.')		
+	return render(request,'contact.html')
 
 def createPoll(request):
 	return render(request,'createPoll.html')

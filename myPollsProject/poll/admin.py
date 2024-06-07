@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Poll, Option, Vote
+from .models import Poll, Option, Vote, Contact
 # Register your models here.
 
 @admin.register(Poll)
@@ -13,3 +13,7 @@ class OptionAdmin(admin.ModelAdmin):
 @admin.register(Vote)
 class VoteAdmin(admin.ModelAdmin):
 	list_display = ('user', 'poll', 'option', 'voted_on')
+
+@admin.register(Contact)
+class ContactAdmin(admin.ModelAdmin):
+	list_display = ('name', 'email', 'subject', 'category')
